@@ -71,6 +71,21 @@ app.post("/tasks", (req, res) => {
   });
 });
 
+// Update task status (PUT request)
+app.put("/tasks/:id", (req, res) => {
+  const taskId = req.params.id;
+  const { status } = req.body;
+
+  const query = "UPDATE tasks SET status = ? WHERE id = ?";
+  connection.query(query, [status, taskId], (err, result) => {
+    if (err) throw new Error(err);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    res.status(200).json({ id: taskId, status });
+  });
+});
+
 app.delete("/tasks/:id", (req, res) => {
   const taskId = req.params.id;
   connection.query(
